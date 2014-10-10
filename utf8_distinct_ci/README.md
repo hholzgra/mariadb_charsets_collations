@@ -1,8 +1,11 @@
-Every once in a while questions like the one in MySQL Bug #60843 or Bug #19567 come up:
+Every once in a while questions like the one in 
+[MySQL Bug #60843](http://bugs.mysql.com/60843) 
+or [Bug #19567](http://bugs.mysql.com/19567) come up:
 
 > What collation should i use if i want case insensitive behavior but also want all accented letter to be treated as distinct to their base letters?
 
-or shorter, as the reporter of bug #60843 put it:
+or shorter, as the reporter of [Bug #60843](http://bugs.mysql.com/60843] 
+put it:
 
 > I need something like utf8_bin + ci
 
@@ -18,10 +21,13 @@ So what is needed to create a collation where all accented forms of the
 while still having case insensitive behavior?
 
 Fortuantely MariaDB and MySQL allows us to add our own collations without 
-having to modify the server itself, see Adding Collations and for our case
- esp. Adding a UCA Collation to an Unicode Character Set.
+having to modify the server itself, see 
+[Adding Collations](http://dev.mysql.com/doc/refman/5.5/en/adding-collation.html) 
+and for our case esp. [Adding a UCA Collation to an Unicode Character Set](
+http://dev.mysql.com/doc/refman/5.5/en/adding-collation-unicode-uca.html).
 
-So all we need to do is to create a new set of LDML (Locale Data Markup Language) 
+So all we need to do is to create a new set of LDML 
+([Locale Data Markup Language](http://www.unicode.org/reports/tr35/)) 
 collation rules that basically looks like this:
 
 ```xml
@@ -47,7 +53,7 @@ letter but no upper case equivalent then this lower case only combination
 needs to be registered as a primary distinct letter instead of a tertiary.
 
 LDML actually specifies that accented variations of a letter are supposed to 
-be registered as 'secondary' or <`s`>, but as MariaDB does not distinguish 
+be registered as 'secondary' or `<s>`, but as MariaDB does not distinguish 
 between primaries and secondaries we need to register all accented letters as 
 primaries instead to get the desired behavior.
 
@@ -62,7 +68,8 @@ So now that we know how the rule set should look like the question that
 remains is: how to find all valid accented letter combinations and how to 
 create a complete rule set from that list quickly.
 
-This can fortunately be automated by using Unicode normalization mechanism. 
+This can fortunately be automated by using 
+[Unicode normalization mechanism](http://en.wikipedia.org/wiki/Unicode_equivalence#Normalization). 
 Unicode allows to represent accented letters by either a single code point 
 or by a combination of a base character and one or more modifiers (even 
 though MariaDB only really supports the single code point approach). 
@@ -83,13 +90,16 @@ upper or lower case form of the same letter with the same modifiers applied.
 From this lists we can then create the LDML ruleset needed to add our new 
 collation.
 
-There are only two more things left to do: find a good name and an unused 
-collation ID for our new collation. For a name I picked `utf8_distinct_ci` 
-for now and as collation ID i picked` 252` as the highest ID used so far 
+There are only two more things left to do: find a good name and an [unused 
+collation ID](http://dev.mysql.com/doc/refman/5.5/en/adding-collation-choosing-id.html)
+for our new collation. For a name I picked `utf8_distinct_ci` 
+for now and as collation ID i picked `252` as the highest ID used so far 
 on my MariaDB 5.5 instance was 251.
 
-The following little PHP script performs all this with a little help from 
-the Internationalization Extension and the resulting output can be found here. 
+The little PHP script in this directory performs all this with a little help
+from the [Internationalization Extension](http://php.net/intl) and the 
+resulting XML output is already stored here, too. 
+
 The new collation can be activated by adding the generated collation rule set 
-to the utf8 charset section within your MySQL installations 
-`charsets/Index.xml` file and restarting the mysqld server process.
+to the `utf8` charset section within your MySQL installations `charsets/Index.xml` 
+file and restarting the mysqld server process.
