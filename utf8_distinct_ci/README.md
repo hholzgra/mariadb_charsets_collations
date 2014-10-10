@@ -11,7 +11,7 @@ this behavior and `utf8_bin` is obviously not case insensitive.
 
 Language specific collations may provide this for accented letters 
 that are acutally part of the languages alphabet, e.g. in `utf8_swedish_ci` 
-'`Å`' is a distinct letter but '`Á`' is still treated as equal to '`A`'.
+`Å` is a distinct letter but `Á` is still treated as equal to `A`.
 
 So what is needed to create a collation where all accented forms of the 
 26 latin standard letters (or ASCII letters) are treated as distinct letters
@@ -66,9 +66,9 @@ This can fortunately be automated by using Unicode normalization mechanism.
 Unicode allows to represent accented letters by either a single code point 
 or by a combination of a base character and one or more modifiers (even 
 though MariaDB only really supports the single code point approach). 
-So e.g. '`Á`' can either be the single code point `U+00C1 'LATIN CAPITAL A 
-WITH ACUTE'` or the combination of '`A`' (`U+0041 'LATIN CAPITAL A'`) and 
-`U+0301 'COMBINING ACUTE ACCENT'`. Unicode normalization allows us to convert 
+So e.g. `Á` can either be the single code point `U+00C1 LATIN CAPITAL A 
+WITH ACUTE` or the combination of `A` (`U+0041 LATIN CAPITAL A`) and 
+`U+0301 COMBINING ACUTE ACCENT`. Unicode normalization allows us to convert 
 everything to either the single code point (composed) or code point sequence 
 (decomposed) form.
 
