@@ -1,13 +1,7 @@
 <?php
 
-$collation_name = "utf8_distinct_ci";
-$collation_id   = 252;
-
-$basechars = array();
-
-// scann the full unicode basic plane minus the 7bit ASCII part
-for ($codepoint = 0x0080; $codepoint < 0xFFFF; $codepoint++) {
-
+function simple_utf8($codepoint) 
+{
   // simple UTF8 encoder
   if ($codepoint < 0x800) {
     $u1 = 0xC0 + ($codepoint >> 6);
@@ -19,6 +13,18 @@ for ($codepoint = 0x0080; $codepoint < 0xFFFF; $codepoint++) {
     $u3 = 0x80 + ($codepoint & 0x3F);
     $utf8 = chr($u1).chr($u2).chr($u3);
   }
+
+  return $utf8;
+}
+
+$collation_name = "utf8_distinct_ci";
+$collation_id   = 252;
+
+$basechars = array();
+
+// scann the full unicode basic plane minus the 7bit ASCII part
+for ($codepoint = 0x0080; $codepoint < 0xFFFF; $codepoint++) {
+  $utf8 = simple_utf8($codepoint);
 
   // normalizing using NFKD (Compatibility Decomposition)
   $normalized = Normalizer::normalize($utf8, Normalizer::FORM_KD);
@@ -41,6 +47,19 @@ for ($codepoint = 0x0080; $codepoint < 0xFFFF; $codepoint++) {
           );
   }
 }
+
+// add known special cases
+
+// upper case German 'ß' ('sz' ligature)
+$basechars['S'][0x1e9e] = array("utf8" => simple_utf8(0x00df),
+				"base" => 'S',
+				"mods" => 'z');
+
+// lower case German 'ß' ('sz' ligature)
+$basechars['S'][0x00df] = array("utf8" => simple_utf8(0x00df),
+				"base" => 's',
+				"mods" => 'z');
+
 
 // sort by base character
 ksort($basechars);
