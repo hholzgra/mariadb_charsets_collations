@@ -4,7 +4,7 @@ or [Bug #19567](http://bugs.mysql.com/19567) come up:
 
 > What collation should i use if i want case insensitive behavior but also want all accented letter to be treated as distinct to their base letters?
 
-or shorter, as the reporter of [Bug #60843](http://bugs.mysql.com/60843] 
+or shorter, as the reporter of [Bug #60843](http://bugs.mysql.com/60843)
 put it:
 
 > I need something like utf8_bin + ci
